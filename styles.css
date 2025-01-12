@@ -1,0 +1,177 @@
+/* General Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    color: #fff;
+    background: #000;
+    position: relative;
+}
+
+/* Falling Matrix Code Animation */
+body::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: repeating-linear-gradient(
+        rgba(0, 255, 0, 0.2) 0px,
+        transparent 2px
+    );
+    opacity: 0.05;
+    animation: matrixBG 3s linear infinite;
+    z-index: -2;
+}
+
+@keyframes matrixBG {
+    0% {
+        background-position: 0 0;
+    }
+    100% {
+        background-position: 0 100%;
+    }
+}
+
+.matrix-code {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: -1;
+}
+
+.matrix-code span {
+    position: absolute;
+    color: rgba(0, 255, 0, 0.8);
+    font-size: 20px;
+    font-family: 'Courier New', Courier, monospace;
+    text-shadow: 0 0 10px rgba(0, 255, 0, 0.8), 0 0 20px rgba(0, 255, 0, 0.6);
+    animation: fall 5s linear infinite;
+    user-select: none;
+}
+
+@keyframes fall {
+    0% {
+        transform: translateY(-100%);
+    }
+    100% {
+        transform: translateY(120vh);
+    }
+}
+
+/* Container Styling */
+.container {
+    text-align: center;
+    max-width: 400px;
+    padding: 30px;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(15px);
+    border-radius: 15px;
+    box-shadow: 0 0 20px rgba(0, 255, 0, 0.5), 0 0 10px rgba(0, 255, 0, 0.3);
+    z-index: 1;
+}
+
+.header h1 {
+    font-size: 2.5rem;
+    color: #0f0;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    animation: glow 2s ease-in-out infinite;
+}
+
+.header p {
+    font-size: 1rem;
+    color: #8f8;
+    margin-bottom: 30px;
+}
+
+/* Input Fields */
+form input {
+    width: 100%;
+    padding: 15px;
+    margin-bottom: 15px;
+    border: none;
+    border-radius: 5px;
+    outline: none;
+    background: rgba(0, 255, 0, 0.1);
+    color: #0f0;
+    font-size: 1rem;
+    text-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
+    box-shadow: 0 0 10px rgba(0, 255, 0, 0.2);
+    transition: all 0.3s ease-in-out;
+}
+
+form input::placeholder {
+    color: rgba(0, 255, 0, 0.7);
+}
+
+form input:focus,
+form input:hover {
+    background: rgba(0, 255, 0, 0.2);
+    box-shadow: 0 0 20px rgba(0, 255, 0, 0.5), 0 0 10px rgba(0, 255, 0, 0.4);
+}
+
+/* Button Styling */
+form button {
+    padding: 15px;
+    border: none;
+    border-radius: 5px;
+    background: linear-gradient(90deg, #00ff00, #006400);
+    color: #fff;
+    font-size: 1.2rem;
+    text-transform: uppercase;
+    cursor: pointer;
+    text-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
+    box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+form button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 30px rgba(0, 255, 0, 0.7), 0 4px 30px rgba(0, 255, 0, 0.7);
+}
+
+/* Success Message */
+.message {
+    margin-top: 20px;
+    font-size: 1rem;
+    color: #0f0;
+    text-shadow: 0 0 10px rgba(0, 255, 0, 0.7);
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* Glow Effect for Header */
+@keyframes glow {
+    0% {
+        text-shadow: 0 0 5px #0f0, 0 0 10px #0f0, 0 0 20px #0f0;
+    }
+    50% {
+        text-shadow: 0 0 20px #0f0, 0 0 30px #0f0, 0 0 50px #0f0;
+    }
+    100% {
+        text-shadow: 0 0 5px #0f0, 0 0 10px #0f0, 0 0 20px #0f0;
+    }
+}

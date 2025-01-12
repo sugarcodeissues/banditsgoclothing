@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bandits Got Clothing</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="matrix-code" id="matrix-code"></div>
+    <div class="container">
+        <div class="header">
+            <h1>Bandits Got Clothing</h1>
+            <p>The waitlist is on! Be the first to know as soon as we Drop!</p>
+        </div>
+        <div class="form-container">
+            <form id="signupForm">
+                <input type="text" id="name" name="name" placeholder="Your Name" required>
+                <input type="email" id="email" name="email" placeholder="Your Email" required>
+                <input type="tel" id="phone" name="phone" placeholder="Your Phone Number" required>
+                <button type="submit">Join the Waitlist</button>
+            </form>
+            <div id="message" class="message"></div>
+        </div>
+    </div>
+    <script>
+        // Background animation
+        const matrixContainer = document.getElementById('matrix-code');
+        const symbols = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+        const columns = Math.floor(window.innerWidth / 20);
+
+        for (let i = 0; i < 300; i++) {
+            const span = document.createElement('span');
+            span.textContent = symbols.charAt(Math.floor(Math.random() * symbols.length));
+            span.style.left = `${Math.random() * 100}vw`;
+            span.style.animationDelay = `${Math.random() * 3}s`;
+            span.style.animationDuration = `${Math.random() * 5 + 3}s`;
+            matrixContainer.appendChild(span);
+        }
+
+        // Form submission
+        document.getElementById('signupForm').addEventListener('submit', async function (event) {
+            event.preventDefault(); // Prevent form from reloading the page
+
+            // Collect form data
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const phone = document.getElementById('phone').value;
+
+            const data = { name, email, phone }; // Prepare data object
+
+            try {
+                // Send data to backend
+                const response = await fetch('http://localhost:3000/submit', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data),
+                });
+
+                // Handle response
+                if (response.ok) {
+                    document.getElementById('message').textContent = 'Thank you for joining the waitlist!';
+                    document.getElementById('message').style.color = 'green';
+                } else {
+                    document.getElementById('message').textContent = 'Something went wrong. Please try again.';
+                    document.getElementById('message').style.color = 'red';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('message').textContent = 'Error connecting to the server.';
+                document.getElementById('message').style.color = 'red';
+            }
+        });
+    </script>
+</body>
+</html>
