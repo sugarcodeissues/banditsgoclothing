@@ -16,7 +16,7 @@ const SPREADSHEET_ID = '1giienkr9U7mR0k6lNFahis8upsJ0M98plyZGH5Hhg1M'; // Replac
 const SHEET_NAME = 'Sheet1'; // Replace with your sheet name
 
 // Load the credentials JSON file
-const CREDENTIALS = require('./credentials.json');
+const CREDENTIALS = require('./backend/credentials.json');
 
 const auth = new google.auth.GoogleAuth({
     credentials: CREDENTIALS,
