@@ -1,9 +1,9 @@
 // Import required modules
-const express = require('express');
+require('dotenv').config();
+onst express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const { google } = require('googleapis');
-require('dotenv').config(); // Load environment variables from .env file
 
 console.log("Current Directory:", __dirname);
 console.log("Looking for credentials.json in:", __dirname + "/credentials.json");
