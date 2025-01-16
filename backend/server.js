@@ -17,6 +17,8 @@ const SHEET_NAME = 'Sheet1'; // Replace with your sheet name
 
 // Load the credentials JSON file
 const credentials = JSON.parse(process.env.CREDENTIALS_JSON);
+const credentials = require('/etc/secrets/credentials.json');
+
 
 
 const auth = new google.auth.GoogleAuth({
