@@ -3,6 +3,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const { google } = require('googleapis');
+require('dotenv').config(); // To load environment variables from .env file
 
 console.log("Current Directory:", __dirname);
 console.log("Looking for credentials.json in:", __dirname + "/credentials.json");
@@ -15,15 +16,14 @@ app.use(bodyParser.json());
 const SPREADSHEET_ID = '1giienkr9U7mR0k6lNFahis8upsJ0M98plyZGH5Hhg1M'; // Replace with your spreadsheet ID
 const SHEET_NAME = 'Sheet1'; // Replace with your sheet name
 
-// Load the credentials JSON file
+// Load the credentials JSON from environment variable
 const credentials = JSON.parse(process.env.CREDENTIALS_JSON);
 
 console.log('Loaded credentials:', credentials);
 
-
-
+// Google Sheets authentication
 const auth = new google.auth.GoogleAuth({
-    credentials: CREDENTIALS,
+    credentials: credentials,  // Corrected to use 'credentials'
     scopes: ['https://www.googleapis.com/auth/spreadsheets'],
 });
 
