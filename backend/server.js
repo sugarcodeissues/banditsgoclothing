@@ -1,13 +1,20 @@
 // Import required modules
-require('dotenv').config();
+require('dotenv').config(); // Load .env variables
+
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const { google } = require('googleapis');
 
-console.log("Current Directory:", __dirname);
-console.log("Looking for credentials.json in:", __dirname + "/credentials.json");
+// Confirming that environment variables are loaded correctly
+console.log('Environment Variables Loaded:');
+console.log('PRIVATE_KEY:', process.env.PRIVATE_KEY ? 'Loaded' : 'Not Loaded');
+console.log('CLIENT_EMAIL:', process.env.CLIENT_EMAIL || 'Not Loaded');
+console.log('PROJECT_ID:', process.env.PROJECT_ID || 'Not Loaded');
+console.log('TYPE:', process.env.TYPE || 'Not Loaded');
+console.log('CLIENT_ID:', process.env.CLIENT_ID || 'Not Loaded');
 
+// Initialize Express app
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
@@ -21,7 +28,7 @@ const credentials = {
   type: process.env.TYPE,
   project_id: process.env.PROJECT_ID,
   private_key_id: process.env.PRIVATE_KEY_ID,
-  private_key: process.env.PRIVATE_KEY.replace(/\\n/g, '\n'), // Proper formatting for private key
+  private_key: process.env.PRIVATE_KEY ? process.env.PRIVATE_KEY.replace(/\\n/g, '\n') : undefined, // Ensure proper formatting for private key
   client_email: process.env.CLIENT_EMAIL,
   client_id: process.env.CLIENT_ID,
   auth_uri: process.env.AUTH_URI,
@@ -30,14 +37,23 @@ const credentials = {
   client_x509_cert_url: process.env.CLIENT_X509_CERT_URL,
 };
 
-console.log('Loaded credentials:', credentials);
+if (!credentials.private_key || !credentials.client_email || !credentials.project_id) {
+  console.error('Error: Missing required Google credentials. Please check your .env file.');
+  process.exit(1);
+}
 
+// Initialize Google Sheets API
 const auth = new google.auth.GoogleAuth({
   credentials: credentials,
   scopes: ['https://www.googleapis.com/auth/spreadsheets'],
 });
-
 const sheets = google.sheets({ version: 'v4', auth });
+const range = 'Sheet1!A:C';
+const data = [
+  ['Value A1', 'Value B1', 'Value C1'], // First row (A, B, C)
+  ['Value A2', 'Value B2', 'Value C2'], // Second row (A, B, C)
+];
+
 
 // Helper function to add data to Google Sheet
 async function addDataToGoogleSheet(data) {
@@ -62,7 +78,7 @@ app.post('/submit', async (req, res) => {
   const { name, email, phone } = req.body;
 
   if (!name || !email || !phone) {
-    return res.status(400).send('Missing required fields');
+    return res.status(400).send('Error: Missing required fields');
   }
 
   console.log("Request received at /submit:", req.body);
