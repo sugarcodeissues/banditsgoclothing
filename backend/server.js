@@ -9,6 +9,7 @@ const nodemailer = require('nodemailer');
 
 // Confirming that environment variables are loaded correctly
 const credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS);
+console.log(credentials);
 
 // Initialize Express app
 const app = express();
