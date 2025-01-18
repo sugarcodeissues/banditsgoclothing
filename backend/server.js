@@ -25,18 +25,8 @@ const SPREADSHEET_ID = '1giienkr9U7mR0k6lNFahis8upsJ0M98plyZGH5Hhg1M'; // Replac
 const SHEET_NAME = 'Sheet1'; // Replace with your sheet name
 
 // Load credentials from environment variables
-const credentials = {
-  type: process.env.TYPE,
-  project_id: process.env.PROJECT_ID,
-  private_key_id: process.env.PRIVATE_KEY_ID,
-  private_key: process.env.PRIVATE_KEY ? process.env.PRIVATE_KEY.replace(/\\n/g, '\n') : undefined, // Ensure proper formatting for private key
-  client_email: process.env.CLIENT_EMAIL,
-  client_id: process.env.CLIENT_ID,
-  auth_uri: process.env.AUTH_URI,
-  token_uri: process.env.TOKEN_URI,
-  auth_provider_x509_cert_url: process.env.AUTH_PROVIDER_X509_CERT_URL,
-  client_x509_cert_url: process.env.CLIENT_X509_CERT_URL,
-};
+const credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS);
+
 
 if (!credentials.private_key || !credentials.client_email || !credentials.project_id) {
   console.error('Error: Missing required Google credentials. Please check your .env file.');
