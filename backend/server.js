@@ -20,13 +20,40 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
+app.post('/test-email', async (req, res) => {
+  const { email, name } = req.body;
+
+  if (!email || !name) {
+    return res.status(400).send('Email and Name are required!');
+  }
+
+  try {
+    await sendConfirmationEmail(email, name); // Call the function to send the email
+    res.status(200).send('Test email sent successfully!');
+  } catch (error) {
+    console.error('Error sending test email:', error);
+    res.status(500).send('Failed to send email.');
+  }
+});
+
 // Google Sheets setup
 const SPREADSHEET_ID = '1giienkr9U7mR0k6lNFahis8upsJ0M98plyZGH5Hhg1M'; // Replace with your spreadsheet ID
 const SHEET_NAME = 'Sheet1'; // Replace with your sheet name
 
 // Load credentials from environment variables
-const credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS);
+const credentials = {
+  type: process.env.TYPE,
+  project_id: process.env.PROJECT_ID,
+  private_key: process.env.PRIVATE_KEY.replace(/\\n/g, '\n'), // Replace escaped newlines
+  client_email: process.env.CLIENT_EMAIL,
+  client_id: process.env.CLIENT_ID,
+  auth_uri: process.env.AUTH_URI,
+  token_uri: process.env.TOKEN_URI,
+  auth_provider_x509_cert_url: process.env.AUTH_PROVIDER_X509_CERT_URL,
+  client_x509_cert_url: process.env.CLIENT_X509_CERT_URL,
+};
 
+console.log("Loaded Credentials:", credentials);
 
 if (!credentials.private_key || !credentials.client_email || !credentials.project_id) {
   console.error('Error: Missing required Google credentials. Please check your .env file.');
@@ -86,7 +113,7 @@ app.post('/submit', async (req, res) => {
 const transporter = nodemailer.createTransport({
   service: 'gmail', // Use your email service (e.g., Gmail)
   auth: {
-    user: process.env.EMAIL_USER, // Your email
+    user: process.env.EMAIL, // Your email
     pass: process.env.EMAIL_PASSWORD, // Your email password or app password
   },
 });
