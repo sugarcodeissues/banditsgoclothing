@@ -5,6 +5,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const { google } = require('googleapis');
+const nodemailer = require('nodemailer');
 
 // Confirming that environment variables are loaded correctly
 console.log('Environment Variables Loaded:');
@@ -91,7 +92,32 @@ app.post('/submit', async (req, res) => {
     res.status(500).send(error.message);
   }
 });
+// Email transporter setup using Nodemailer
+const transporter = nodemailer.createTransport({
+  service: 'gmail', // Use your email service (e.g., Gmail)
+  auth: {
+    user: process.env.EMAIL_USER, // Your email
+    pass: process.env.EMAIL_PASSWORD, // Your email password or app password
+  },
+});
 
+// Helper function to send confirmation email
+async function sendConfirmationEmail(email, name) {
+  const mailOptions = {
+    from: process.env.EMAIL_USER, // Sender email
+    to: email, // Receiver email
+    subject: 'Waitlist Confirmation',
+    text: `Hello ${name},\n\nThank you for joining the waitlist! We’ll keep you updated.\n\nBest regards,\nTeam Banditsgoclothing`,
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
+    console.log(`Confirmation email sent to ${email}`);
+  } catch (error) {
+    console.error('Error sending confirmation email:', error);
+    throw new Error('Failed to send confirmation email');
+  }
+}
 // Start the server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
