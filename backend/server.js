@@ -20,6 +20,22 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
+app.post('/test-email', async (req, res) => {
+  const { email, name } = req.body;
+
+  if (!email || !name) {
+    return res.status(400).send('Email and Name are required!');
+  }
+
+  try {
+    await sendConfirmationEmail(email, name); // Call the function to send the email
+    res.status(200).send('Test email sent successfully!');
+  } catch (error) {
+    console.error('Error sending test email:', error);
+    res.status(500).send('Failed to send email.');
+  }
+});
+
 // Google Sheets setup
 const SPREADSHEET_ID = '1giienkr9U7mR0k6lNFahis8upsJ0M98plyZGH5Hhg1M'; // Replace with your spreadsheet ID
 const SHEET_NAME = 'Sheet1'; // Replace with your sheet name
