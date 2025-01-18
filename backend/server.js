@@ -8,18 +8,12 @@ const { google } = require('googleapis');
 const nodemailer = require('nodemailer');
 
 // Confirming that environment variables are loaded correctly
-const credentials = {
-  type: process.env.TYPE,
-  project_id: process.env.PROJECT_ID,
-  private_key: process.env.PRIVATE_KEY.replace(/\\n/g, '\n'), // Replace escaped newlines
-  client_email: process.env.CLIENT_EMAIL,
-  client_id: process.env.CLIENT_ID,
-  auth_uri: process.env.AUTH_URI,
-  token_uri: process.env.TOKEN_URI,
-  auth_provider_x509_cert_url: process.env.AUTH_PROVIDER_X509_CERT_URL,
-  client_x509_cert_url: process.env.CLIENT_X509_CERT_URL,
-};
-console.log("Loaded Credentials:", credentials);
+console.log('Environment Variables Loaded:');
+console.log('PRIVATE_KEY:', process.env.PRIVATE_KEY ? 'Loaded' : 'Not Loaded');
+console.log('CLIENT_EMAIL:', process.env.CLIENT_EMAIL || 'Not Loaded');
+console.log('PROJECT_ID:', process.env.PROJECT_ID || 'Not Loaded');
+console.log('TYPE:', process.env.TYPE || 'Not Loaded');
+console.log('CLIENT_ID:', process.env.CLIENT_ID || 'Not Loaded');
 
 // Initialize Express app
 const app = express();
@@ -43,6 +37,7 @@ const credentials = {
   auth_provider_x509_cert_url: process.env.AUTH_PROVIDER_X509_CERT_URL,
   client_x509_cert_url: process.env.CLIENT_X509_CERT_URL,
 };
+console.log("Loaded Credentials:", credentials);
 
 if (!credentials.private_key || !credentials.client_email || !credentials.project_id) {
   console.error('Error: Missing required Google credentials. Please check your .env file.');
