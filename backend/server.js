@@ -8,12 +8,7 @@ const { google } = require('googleapis');
 const nodemailer = require('nodemailer');
 
 // Confirming that environment variables are loaded correctly
-console.log('Environment Variables Loaded:');
-console.log('PRIVATE_KEY:', process.env.PRIVATE_KEY ? 'Loaded' : 'Not Loaded');
-console.log('CLIENT_EMAIL:', process.env.CLIENT_EMAIL || 'Not Loaded');
-console.log('PROJECT_ID:', process.env.PROJECT_ID || 'Not Loaded');
-console.log('TYPE:', process.env.TYPE || 'Not Loaded');
-console.log('CLIENT_ID:', process.env.CLIENT_ID || 'Not Loaded');
+const credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS);
 
 // Initialize Express app
 const app = express();
