@@ -12,15 +12,43 @@ console.log('Environment Variables Loaded:');
 console.log('PRIVATE_KEY:', process.env.PRIVATE_KEY ? 'Loaded' : 'Not Loaded');
 console.log('CLIENT_EMAIL:', process.env.CLIENT_EMAIL || 'Not Loaded');
 console.log('PROJECT_ID:', process.env.PROJECT_ID || 'Not Loaded');
-console.log('TYPE:', process.env.TYPE || 'Not Loaded');
-console.log('CLIENT_ID:', process.env.CLIENT_ID || 'Not Loaded');
+console.log('EMAIL:', process.env.EMAIL ? 'Loaded' : 'Not Loaded');
+console.log('EMAIL_PASSWORD:', process.env.EMAIL_PASSWORD ? 'Loaded' : 'Not Loaded');
 
 // Initialize Express app
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
-app.post('/test-email', async (req, res) => {
+// Email transporter setup using Nodemailer
+const transporter = nodemailer.createTransport({
+  service: 'gmail', // Use your email service (e.g., Gmail)
+  auth: {
+    user: process.env.EMAIL, // Your email
+    pass: process.env.EMAIL_PASSWORD, // Your email password or app password
+  },
+});
+
+// Helper function to send confirmation email
+async function sendConfirmationEmail(email, name) {
+  const mailOptions = {
+    from: process.env.EMAIL, // Sender email
+    to: email, // Receiver email
+    subject: 'Waitlist Confirmation',
+    text: `Hello ${name},\n\nThank you for joining the waitlist! We’ll keep you updated.\n\nBest regards,\nTeam Bandits Got Clothing`,
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
+    console.log(`Confirmation email sent to ${email}`);
+  } catch (error) {
+    console.error('Error sending confirmation email:', error);
+    throw new Error('Failed to send confirmation email');
+  }
+}
+
+// Endpoint to handle email sending
+app.post('/send-email', async (req, res) => {
   const { email, name } = req.body;
 
   if (!email || !name) {
@@ -28,11 +56,11 @@ app.post('/test-email', async (req, res) => {
   }
 
   try {
-    await sendConfirmationEmail(email, name); // Call the function to send the email
-    res.status(200).send('Test email sent successfully!');
+    await sendConfirmationEmail(email, name);
+    res.status(200).send({ message: 'Email sent successfully' });
   } catch (error) {
-    console.error('Error sending test email:', error);
-    res.status(500).send('Failed to send email.');
+    console.error('Error in /send-email endpoint:', error);
+    res.status(500).send({ message: 'Failed to send email' });
   }
 });
 
@@ -47,13 +75,7 @@ const credentials = {
   private_key: process.env.PRIVATE_KEY.replace(/\\n/g, '\n'), // Replace escaped newlines
   client_email: process.env.CLIENT_EMAIL,
   client_id: process.env.CLIENT_ID,
-  auth_uri: process.env.AUTH_URI,
-  token_uri: process.env.TOKEN_URI,
-  auth_provider_x509_cert_url: process.env.AUTH_PROVIDER_X509_CERT_URL,
-  client_x509_cert_url: process.env.CLIENT_X509_CERT_URL,
 };
-
-console.log("Loaded Credentials:", credentials);
 
 if (!credentials.private_key || !credentials.client_email || !credentials.project_id) {
   console.error('Error: Missing required Google credentials. Please check your .env file.');
@@ -66,12 +88,6 @@ const auth = new google.auth.GoogleAuth({
   scopes: ['https://www.googleapis.com/auth/spreadsheets'],
 });
 const sheets = google.sheets({ version: 'v4', auth });
-const range = 'Sheet1!A:C';
-const data = [
-  ['Value A1', 'Value B1', 'Value C1'], // First row (A, B, C)
-  ['Value A2', 'Value B2', 'Value C2'], // Second row (A, B, C)
-];
-
 
 // Helper function to add data to Google Sheet
 async function addDataToGoogleSheet(data) {
@@ -99,42 +115,22 @@ app.post('/submit', async (req, res) => {
     return res.status(400).send('Error: Missing required fields');
   }
 
-  console.log("Request received at /submit:", req.body);
+  console.log('Request received at /submit:', req.body);
 
   try {
-    // Call the helper function to add data to Google Sheets
+    // Add data to Google Sheets
     await addDataToGoogleSheet([name, email, phone]);
-    res.status(200).send('Successfully added to Google Sheet');
+
+    // Send confirmation email
+    await sendConfirmationEmail(email, name);
+
+    res.status(200).send('Successfully added to Google Sheet and email sent');
   } catch (error) {
+    console.error('Error in /submit endpoint:', error);
     res.status(500).send(error.message);
   }
 });
-// Email transporter setup using Nodemailer
-const transporter = nodemailer.createTransport({
-  service: 'gmail', // Use your email service (e.g., Gmail)
-  auth: {
-    user: process.env.EMAIL, // Your email
-    pass: process.env.EMAIL_PASSWORD, // Your email password or app password
-  },
-});
 
-// Helper function to send confirmation email
-async function sendConfirmationEmail(email, name) {
-  const mailOptions = {
-    from: process.env.EMAIL_USER, // Sender email
-    to: email, // Receiver email
-    subject: 'Waitlist Confirmation',
-    text: `Hello ${name},\n\nThank you for joining the waitlist! We’ll keep you updated.\n\nBest regards,\nTeam Banditsgoclothing`,
-  };
-
-  try {
-    await transporter.sendMail(mailOptions);
-    console.log(`Confirmation email sent to ${email}`);
-  } catch (error) {
-    console.error('Error sending confirmation email:', error);
-    throw new Error('Failed to send confirmation email');
-  }
-}
 // Start the server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
