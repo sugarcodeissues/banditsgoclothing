@@ -17,18 +17,32 @@ console.log('EMAIL_PASSWORD:', process.env.EMAIL_PASSWORD ? 'Loaded' : 'Not Load
 
 // Initialize Express app
 const app = express();
-// Import required modules
-const cors = require('cors');
 
-// Configure CORS to restrict access to your frontend
+// CORS Setup
 const corsOptions = {
-  origin: 'https://banditsgoclothing.store', // Allow requests only from your deployed frontend
-  methods: ['GET', 'POST', 'OPTIONS'],       // Allow specific HTTP methods
-  allowedHeaders: ['Content-Type', 'Authorization'], // Allow specific headers
+  origin: 'https://banditsgoclothing.store', // Allow only your frontend domain
+  methods: ['GET', 'POST', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  optionsSuccessStatus: 200, // Respond with HTTP 200 for preflight
 };
+app.use(cors(corsOptions)); // Apply CORS middleware globally
 
-app.use(cors(corsOptions));
-app.use(cors());
+// Handle preflight (OPTIONS) requests for `/submit` and `/send-email`
+app.options('/submit', (req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', 'https://banditsgoclothing.store');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  return res.status(200).end();
+});
+
+app.options('/send-email', (req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', 'https://banditsgoclothing.store');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  return res.status(200).end();
+});
+
+// Middleware to parse JSON request bodies
 app.use(bodyParser.json());
 
 // Email transporter setup using Nodemailer
