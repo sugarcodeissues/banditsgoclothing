@@ -17,6 +17,17 @@ console.log('EMAIL_PASSWORD:', process.env.EMAIL_PASSWORD ? 'Loaded' : 'Not Load
 
 // Initialize Express app
 const app = express();
+// Import required modules
+const cors = require('cors');
+
+// Configure CORS to restrict access to your frontend
+const corsOptions = {
+  origin: 'https://banditsgoclothing.store', // Allow requests only from your deployed frontend
+  methods: ['GET', 'POST', 'OPTIONS'],       // Allow specific HTTP methods
+  allowedHeaders: ['Content-Type', 'Authorization'], // Allow specific headers
+};
+
+app.use(cors(corsOptions));
 app.use(cors());
 app.use(bodyParser.json());
 
