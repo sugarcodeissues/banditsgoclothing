@@ -116,7 +116,7 @@
 
             const data = { name, email, phone }; // Prepare data object
             
-            const response = await fetch('http://localhost:3000/submit', {
+            const response = await fetch('https://banditsgoclothing.vercel.app/submit', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
@@ -126,7 +126,7 @@
 
             try {
                 // Send data to backend email endpoint
-                const response = await fetch('http://localhost:3000/send-email', {
+                const response = await fetch('https://banditsgoclothing.vercel.app/send-email', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
